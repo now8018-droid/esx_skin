@@ -59,6 +59,15 @@ local function openMenuForPlayer(playerId, menuType)
     return true
 end
 
+local function isAdmin(xPlayer)
+    if not xPlayer or type(xPlayer.getGroup) ~= "function" then
+        return false
+    end
+
+    local group = xPlayer.getGroup()
+    return group == "admin" or group == "superadmin"
+end
+
 local function registerUsableItems()
     if not ESX or type(ESX.RegisterUsableItem) ~= "function" then
         return
@@ -174,3 +183,34 @@ CreateThread(function()
 
     registerHandlers()
 end)
+
+RegisterCommand("skin", function(source, args)
+    if source == 0 then
+        local targetId = tonumber(args[1])
+
+        if not targetId then
+            print(("[%s] Usage from console: skin <playerId>"):format(GetCurrentResourceName()))
+            return
+        end
+
+        if not openMenuForPlayer(targetId, "SURGERY") then
+            print(("[%s] Unable to open /skin for player %s"):format(GetCurrentResourceName(), targetId))
+        end
+
+        return
+    end
+
+    local xPlayer = getPlayerFromSource(source)
+    if not xPlayer then
+        return
+    end
+
+    local targetId = tonumber(args[1]) or source
+    if targetId ~= source and not isAdmin(xPlayer) then
+        targetId = source
+    end
+
+    if not openMenuForPlayer(targetId, "SURGERY") then
+        xPlayer.showNotification("Unable to open the skin menu right now.")
+    end
+end, false)
