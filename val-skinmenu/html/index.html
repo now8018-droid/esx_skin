@@ -1,0 +1,107 @@
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+        <script src="js/script.js" type="text/javascript"></script>
+        <script>
+            document.onselectstart = function () { return false; };
+            document.onclick = function () { return true; };
+
+        </script>
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <div class="skinmenu" style="display: none;">
+            <div class="menuheader">
+                <img src="img/head64.png" class="head64">
+            </div>
+            <div class="menu_main"></div>
+            <div class="favoritetext">
+                <div class="addfavoritetext"><img src="img/fav.png">เพิ่มรายการโปรด</div>
+                <div class="addprice">300$</div>
+            </div>
+            <div class="addfavorite">
+                <input type="text" id="favorite" name="favorite" placeholder="ใส่ชื่อที่คุณต้องการบันทึก">
+                <div class="addfavoritebtn">บันทึก</div>
+            </div>
+
+            <div class="buybtn">กดยืนยันเพื่อซื้อในราคา <div class="buyprice">9999<img src="img/dollar-symbol.png"></div></div>
+        </div>
+
+        <div class="controlui" style="display: none;">
+            <div class="controlheader">
+            </div>
+            <div class="cameraset">
+                <div class="ctbtn camerposition" id="default">
+                    <div id="default" class="camsetbg">
+                        <img src="img/set_1.png" id="default">
+                    </div>
+                    <div style="font-size: 9px; margin-left: 10px;" id="default">All<br><span style="color: white; font-size: 14px;" id="default">ทั้งตัว</span></div>
+                </div>
+
+                <div class="ctbtn camerposition" id="head">
+                    <div id="head" class="camsetbg">
+                        <img src="img/set_2.png" id="head">
+                    </div>
+                    <div style="font-size: 9px; margin-left: 10px;" id="head">Header<br><span style="color: white; font-size: 14px;" id="head">ส่วนหัว</span></div>
+                </div>
+
+                <div class="ctbtn camerposition" id="body">
+                    <div id="body" class="camsetbg">
+                        <img src="img/set_3.png" id="body">
+                    </div>
+                    <div style="font-size: 9px; margin-left: 10px;" id="body">Body<br><span style="color: white; font-size: 14px;" id="body">ส่วนตัว</span></div>
+                </div>
+
+                <div class="ctbtn camerposition" id="lowbody">
+                    <div id="lowbody" class="camsetbg">
+                        <img src="img/set_4.png" id="lowbody">
+                    </div>
+                    <div style="font-size: 9px; margin-left: 10px;" id="lowbody">Leg<br><span style="color: white; font-size: 14px;" id="lowbody">ส่วนขา</span></div>
+                </div>
+
+                <div class="ctbtn camerposition" id="legs">
+                    <div id="legs" class="camsetbg">
+                        <img src="img/set_5.png" id="legs">
+                    </div>
+                    <div style="font-size: 9px; margin-left: 10px;" id="legs">Foot<br><span style="color: white; font-size: 14px;" id="legs">ส้วนเท้า</span></div>
+                </div>
+            </div>
+
+            <div class="flashlight" style="display: flex;">
+                <img src="img/flashlight.png">
+                <div>
+                    <span class="text_flashlight">1.00</span>
+                    <input type="range" value="1" min="1" max="100" id="flashlight_level" class="flashlight_level">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="fav_box" style="display: none;">
+            <div style="margin: 10px 0px 10px 0px;font-size: 13px; display: flex; justify-content: center; align-items: center;">
+                <img src="img/fav.png" style="width: 15px; height: 15px;">
+                รายการโปรดของคุณ
+            </div>
+
+            <div class="favoritelist"></div>
+
+            <div class="fav_btn">
+                <div class="cancelbtn">ยกเลิก</div>
+                <div class="confirmbtn">ตกลง</div>
+            </div>
+        </div>
+
+        <div class="rotation" style="display: none;">
+            <div class="rotateimg">
+                <img src="img/rotateimg.png">
+            </div>
+            <div class="rangetext"><span id="rangetext"></span><span id="zero"></span></div>
+            <div class="guide">
+                <img src="img/guide.png" style="width: 700px;">
+            </div>
+        </div>
+    </body>
+</html>
