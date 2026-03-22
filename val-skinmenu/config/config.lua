@@ -74,7 +74,7 @@ Config = {
             Position = {
 
             },
-            CustumeType = "SURGERY",
+            CustumeType = "default",
             Price = {
                 AddFavorite = false,
                 BuyPrice = 0,

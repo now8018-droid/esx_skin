@@ -61,5 +61,12 @@ ESX.RegisterCommand("skin", "admin", function(xPlayer, args)
     if not args.playerId then
         args.playerId = xPlayer
     end
+
+    local targetPlayerId = args.playerId.source
+    if GetResourceState("val-skinmenu") == "started" then
+        TriggerClientEvent("val-skinmenu:OpenMenuByType", targetPlayerId, "default")
+        return
+    end
+
     args.playerId.triggerEvent("esx_skin:openSaveableMenu")
 end, false, { help = TranslateCap("skin"), arguments = { { name = "playerId", help = TranslateCap("skin"), type = "player" }} })
