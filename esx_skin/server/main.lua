@@ -64,7 +64,7 @@ ESX.RegisterCommand("skin", "admin", function(xPlayer, args)
 
     local targetPlayerId = args.playerId.source
     if GetResourceState("val-skinmenu") == "started" then
-        TriggerClientEvent("val-skinmenu:OpenMenuByType", targetPlayerId, "Clothes")
+        TriggerClientEvent("val-skinmenu:OpenMenuByType", targetPlayerId, "default")
         return
     end
 
