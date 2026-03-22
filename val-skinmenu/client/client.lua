@@ -519,6 +519,55 @@ function ScriptWork()
         },
     }
 
+    local CategoryDefinitions = {
+        {
+            id = "face",
+            label = "หน้าตา",
+            keys = {
+                "sex", "face", "skin", "bodyb", "blemishes", "age", "complexion", "sun", "moles",
+                "eye_squint", "eye_color", "eyebrows_1", "eyebrows_3", "eyebrows_5", "makeup_1",
+                "makeup_3", "lipstick_1", "lipstick_3", "chest", "blush", "blush_2", "beard_1",
+                "beard_3", "nose_1", "nose_2", "nose_3", "nose_4", "nose_5", "nose_6", "cheeks_1",
+                "cheeks_2", "cheeks_3", "lip_thickness", "jaw_1", "jaw_2", "chin_1", "chin_2",
+                "chin_3", "chin_4", "neck_thickness",
+            }
+        },
+        {
+            id = "hair",
+            label = "ทรงผม",
+            keys = {
+                "hair", "hair_color",
+            }
+        },
+        {
+            id = "clothes",
+            label = "เสื้อผ้า",
+            keys = {
+                "torso", "tshirt", "decals", "arms", "pants", "shoes", "bproof", "bags",
+            }
+        },
+        {
+            id = "accessories",
+            label = "ของตกแต่ง",
+            keys = {
+                "mask", "chain", "helmet", "glasses", "watches", "bracelets", "ears",
+            }
+        },
+    }
+
+    local SetupCategoryByName = {}
+    for _, category in ipairs(CategoryDefinitions) do
+        for _, categoryKey in ipairs(category.keys) do
+            local categoryConfig = ListCheck[categoryKey]
+            if categoryConfig and categoryConfig.name then
+                SetupCategoryByName[categoryConfig.name] = {
+                    id = category.id,
+                    label = category.label,
+                }
+            end
+        end
+    end
+
 	function GetSkinData(restrict)
 
 		local elements, lits_setup, accept_data = {}, {}, {}
@@ -564,23 +613,43 @@ function ScriptWork()
 				end
 			end
 
+			local setupByName = {}
+			local orderedSetupIndexes = {}
+			for setupIndex, setup in pairs(lits_setup) do
+				if type(setupIndex) == "number" then
+					orderedSetupIndexes[#orderedSetupIndexes + 1] = setupIndex
+				end
+
+				if setup.item1 and setup.item1.name then
+					local categoryData = SetupCategoryByName[setup.item1.name]
+					if categoryData then
+						setup.category = categoryData.id
+						setup.categoryLabel = categoryData.label
+					end
+					setupByName[setup.item1.name] = setup
+				end
+			end
+			table.sort(orderedSetupIndexes)
+
 			if restrict then
 				local check_index = {}
-				for _, setup in pairs(lits_setup) do
-					if setup.item1 then
-						for restrictKey, enabled in pairs(restrict) do
-							if enabled and ListCheck[restrictKey] then
-								local name_real = ListCheck[restrictKey]["name"]
-								if name_real and name_real == setup.item1.name and not check_index[name_real] then
-									check_index[name_real] = true
-									accept_data[#accept_data + 1] = setup
-								end
+				for _, category in ipairs(CategoryDefinitions) do
+					for _, restrictKey in ipairs(category.keys) do
+						if restrict[restrictKey] and ListCheck[restrictKey] then
+							local nameReal = ListCheck[restrictKey]["name"]
+							local setup = nameReal and setupByName[nameReal]
+							if setup and not check_index[nameReal] then
+								check_index[nameReal] = true
+								accept_data[#accept_data + 1] = setup
 							end
 						end
 					end
 				end
 			else
-				accept_data = lits_setup
+				for i = 1, #orderedSetupIndexes do
+					local setupIndex = orderedSetupIndexes[i]
+					accept_data[#accept_data + 1] = lits_setup[setupIndex]
+				end
 			end
 
 			loadedSkinData = true

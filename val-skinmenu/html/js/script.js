@@ -49,6 +49,83 @@ $(function () {
     }
 
     let select_skin = null
+    let activeCategory = 'all'
+
+    function getAvailableCategories() {
+        const categories = []
+        const seen = new Set()
+
+        for (const key in skinlist) {
+            const entry = skinlist[key]
+            if (!entry || !entry.category || seen.has(entry.category)) {
+                continue
+            }
+
+            seen.add(entry.category)
+            categories.push({
+                id: entry.category,
+                label: entry.categoryLabel || entry.category
+            })
+        }
+
+        return categories
+    }
+
+    function getVisibleSkinEntries() {
+        const entries = []
+
+        for (const key in skinlist) {
+            const entry = skinlist[key]
+            if (!entry) {
+                continue
+            }
+
+            if (activeCategory !== 'all' && entry.category && entry.category !== activeCategory) {
+                continue
+            }
+
+            entries.push([key, entry])
+        }
+
+        return entries
+    }
+
+    function renderCategoryTabs() {
+        const categories = getAvailableCategories()
+        const hasActiveCategory = activeCategory === 'all' || categories.some((category) => category.id === activeCategory)
+
+        if (!hasActiveCategory) {
+            activeCategory = 'all'
+        }
+
+        $(".category_tabs").empty()
+
+        if (categories.length <= 1) {
+            return
+        }
+
+        $(".category_tabs").append(`
+            <div class="category_tab ${activeCategory === 'all' ? 'active' : ''}" data-category="all">ทั้งหมด</div>
+        `)
+
+        categories.forEach((category) => {
+            $(".category_tabs").append(`
+                <div class="category_tab ${activeCategory === category.id ? 'active' : ''}" data-category="${category.id}">${category.label}</div>
+            `)
+        })
+
+        $(".category_tab").off("click").on("click", function () {
+            const nextCategory = $(this).data("category")
+            if (!nextCategory || nextCategory === activeCategory) {
+                return
+            }
+
+            activeCategory = nextCategory
+            select_skin = null
+            PlaySound(2)
+            RefreshSkinMenu()
+        })
+    }
 
      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,6 +135,7 @@ $(function () {
             if (item.data.status) {
                 skinlist = item.data.skin_list
                 cfg = item.data.CFG
+                activeCategory = 'all'
                 SetDefaultMenu()
                 RefreshSkinMenu()
             }
@@ -220,6 +298,8 @@ function ToggleMenu(status) {
     function RefreshSkinMenu() {
         let canselectsex = false
         allskincount = 0
+        const visibleEntries = getVisibleSkinEntries()
+
         for (key in skinlist) {
             allskincount = allskincount + 1
             if (skinlist[key].item1.name == "sex") { canselectsex = true }
@@ -229,15 +309,24 @@ function ToggleMenu(status) {
         $(".pagebtn").css({"background-color": "rgb(255, 255, 255, 0.1)","box-shadow": "0px 0px 0px rgb(255, 255, 255)"})
         $(".page"+MenuPage+"").css({"background-color": "rgb(120, 171, 190)","box-shadow": "0px 0px 0px rgb(120, 171, 190)"})
         $(".menu_main").empty()
+        renderCategoryTabs()
         // console.log("select_skin : "+select_skin+"")
-        for (key in skinlist) {
-            let v = skinlist[key]
+        let currentCategory = null
+        for (const [key, v] of visibleEntries) {
             let skintype = ``
             let pattern = ``
             let value = ``
             let setrange1 = ``
             let setrange2 = ``
             let select = ``
+
+            if (v.category && v.category !== currentCategory) {
+                currentCategory = v.category
+                $(".menu_main").append(`
+                    <div class="category_header">${v.categoryLabel || v.category}</div>
+                `)
+            }
+
             if (select_skin != null && key == select_skin && v.item1.value != null) {
                 select = `selctskin`
                 setrange1 = `<div class="set_range"> <input type="range" class="skinrange rangeskin_${key}" value="${v.item1.value}" min="${v.item1.minvalue}" max="${v.item1.maxvalue}" id="${key}"> </div>`
