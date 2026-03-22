@@ -111,7 +111,46 @@ local function IsAdmin(xPlayer)
     return group == "admin" or group == "superadmin"
 end
 
+local function NotifyPlayer(xPlayer, message)
+    if xPlayer and type(xPlayer.showNotification) == "function" then
+        xPlayer.showNotification(message)
+    end
+end
+
+local function OpenSkinMenuForPlayer(playerSource)
+    if type(playerSource) ~= "number" or playerSource <= 0 then
+        return false
+    end
+
+    if GetResourceState("val-skinmenu") == "started" then
+        TriggerClientEvent("val-skinmenu:OpenMenuByType", playerSource, "SURGERY")
+        return true
+    end
+
+    if GetResourceState("skinchanger") == "started" then
+        TriggerClientEvent("esx_skin:openSaveableMenu", playerSource)
+        return true
+    end
+
+    return false
+end
+
 RegisterCommand("skin", function(source, args)
+    if source == 0 then
+        local targetId = tonumber(args[1])
+
+        if not targetId then
+            print("[esx_skin] Usage from console: skin <playerId>")
+            return
+        end
+
+        if not OpenSkinMenuForPlayer(targetId) then
+            print("[esx_skin] Unable to open the skin menu because no compatible skin menu resource is started.")
+        end
+
+        return
+    end
+
     local xPlayer = GetPlayerFromSource(source)
 
     if not xPlayer then
@@ -123,10 +162,9 @@ RegisterCommand("skin", function(source, args)
         targetId = source
     end
 
-    local targetPlayer = GetPlayerFromSource(targetId)
-    if not targetPlayer then
-        targetPlayer = xPlayer
-    end
+    local targetPlayer = GetPlayerFromSource(targetId) or xPlayer
 
-    targetPlayer.triggerEvent("val-skinmenu:OpenMenuByType", "SURGERY")
+    if not OpenSkinMenuForPlayer(targetPlayer.source or source) then
+        NotifyPlayer(xPlayer, "Skin menu resource is not available right now.")
+    end
 end, false)
