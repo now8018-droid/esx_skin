@@ -91,20 +91,6 @@ RegisterNetEvent("esx_skin:openSaveableRestrictedMenu", function(submitCb, cance
     Menu:Saveable(submitCb, cancelCb, restrict)
 end)
 
-RegisterNetEvent("esx_skin:openCommandMenu", function()
-    if GetResourceState("val-skinmenu") == "started" then
-        local ok = pcall(function()
-            exports["val-skinmenu"]:ForceSkinMenu("SURGERY")
-        end)
-
-        if ok then
-            return
-        end
-    end
-
-    Menu:Saveable()
-end)
-
 AddEventHandler("esx_skin:getLastSkin", function(cb)
     cb(Skin.Last)
 end)
